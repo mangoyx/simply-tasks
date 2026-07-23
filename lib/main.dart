@@ -90,15 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
     ],
   ),
   title: Text(widget.title),
-
-
-
-
-
-
-
-
-
   actions: [
     IconButton(
       icon: const Icon(Icons.settings),
