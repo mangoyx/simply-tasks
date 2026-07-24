@@ -32,19 +32,36 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  @override
+void initState() {
+  super.initState();
+  _loadTasks();
+}
   final TextEditingController _taskController = TextEditingController();
   List<Task> tasks = [];
-  Future<void> _savetasks() async {
+  Future<void> _saveTasks() async {
     final prefs = await SharedPreferences.getInstance();
-    final taskList =tasks.map((tasks) => tasks.toJson()).toList();
+    final taskList = tasks.map((task) => tasks.toJson()).toList();
     await prefs.setString('tasks', jsonEncode(taskList));
+  }
+  Future<void> _loadTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final taskString = prefs.getString('tasks');
+    if (taskString != null) {
+      final List<dynamic> taskList = jsonDecode(taskString);
+      setState(() {
+        tasks = taskList.map((json) => Task.fromJson(json)).toList();
+      });
+    }
   }
   void addTask() {
     setState(() {
       tasks.add(Task(_taskController.text));
       _taskController.clear();
     });
+    _saveTasks();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,6 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
               setState(() {
                 tasks[index].isDone = value!;
               }); //set state
+              _saveTasks();
             },
           ); //checkbox
         },
