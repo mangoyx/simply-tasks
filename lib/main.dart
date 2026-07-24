@@ -1,3 +1,5 @@
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import 'task.dart';
 import 'package:flutter/material.dart';
 
@@ -32,13 +34,17 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _taskController = TextEditingController();
   List<Task> tasks = [];
+  Future<void> _savetasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final taskList =tasks.map((tasks) => tasks.toJson()).toList();
+    await prefs.setString('tasks', jsonEncode(taskList));
+  }
   void addTask() {
     setState(() {
       tasks.add(Task(_taskController.text));
       _taskController.clear();
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
