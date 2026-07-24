@@ -41,7 +41,7 @@ void initState() {
   List<Task> tasks = [];
   Future<void> _saveTasks() async {
     final prefs = await SharedPreferences.getInstance();
-    final taskList = tasks.map((task) => tasks.toJson()).toList();
+    final taskList = tasks.map((task) => task.toJson()).toList();
     await prefs.setString('tasks', jsonEncode(taskList));
   }
   Future<void> _loadTasks() async {
