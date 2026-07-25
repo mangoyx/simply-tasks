@@ -10,15 +10,32 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  ThemeMode _getThemeMode() {
+    final hour = DateTime.now().hour;
+    if (hour >= 6 && hour < 18) {
+      return ThemeMode.light;
+    } else {
+      return ThemeMode.dark;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Simply Tasks',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 4, 12, 58),
+          seedColor: Colors.red,
+          brightness: Brightness.light,
         ),
       ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 5, 8, 20),
+          brightness: Brightness.dark,
+        ),
+      ),
+      themeMode: _getThemeMode(),
       home: const MyHomePage(title: 'Simply Tasks'),
     );
   }
@@ -124,7 +141,7 @@ void initState() {
         itemCount: tasks.length,
         itemBuilder: (context, index) {
           return Dismissible(
-            key: Key(tasks[index].title + index.toString()),
+            key: Key(tasks[index].id.toString()),
             direction: DismissDirection.endToStart,
             onDismissed: (direction) {
               setState(() {
@@ -133,7 +150,7 @@ void initState() {
               _saveTasks();
             },
             background: Container(
-              color: Colors.red,
+              color: const Color.fromARGB(255, 196, 82, 74),
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.only(right: 20),
               child: const Icon (
@@ -141,19 +158,25 @@ void initState() {
                 color: Colors.white,
               ),
             ),
-            child: CheckboxListTile(
-              title: Text(tasks[index].title),
-              value: tasks[index].isDone,
-              onChanged: (bool? value) {
-                setState(() {
-                  tasks[index].isDone = value!;
+            child: Card(
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: CheckboxListTile(
+                title: Text(tasks[index].title),
+                value: tasks[index].isDone,
+                onChanged: (bool? value) {
+                  setState(() {
+                    tasks[index].isDone = value!;
                 });
-                _saveTasks();
-              },      
-            ),                
-          );      
-        },            
-      ),                     
-    );                        
-  }                           
-}    
+                  _saveTasks();
+              },                   
+            ),
+          ),
+        );
+      },                             
+    ),
+  );
+}                                    
+}      
