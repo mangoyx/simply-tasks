@@ -123,18 +123,37 @@ void initState() {
       body: ListView.builder(
         itemCount: tasks.length,
         itemBuilder: (context, index) {
-          return CheckboxListTile(
-            title: Text(tasks[index].title),
-            value: tasks[index].isDone,
-            onChanged: (bool? value) {
+          return Dismissible(
+            key: Key(tasks[index].title + index.toString()),
+            direction: DismissDirection.endToStart,
+            onDismissed: (direction) {
               setState(() {
-                tasks[index].isDone = value!;
-              }); //set state
+                tasks.removeAt(index);
+              });
               _saveTasks();
             },
-          ); //checkbox
-        },
-      ), //listview
-    ); // scaffold
-  }
-}
+            background: Container(
+              color: Colors.red,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 20),
+              child: const Icon (
+                Icons.keyboard_double_arrow_left,
+                color: Colors.white,
+              ),
+            ),
+            child: CheckboxListTile(
+              title: Text(tasks[index].title),
+              value: tasks[index].isDone,
+              onChanged: (bool? value) {
+                setState(() {
+                  tasks[index].isDone = value!;
+                });
+                _saveTasks();
+              },      
+            ),                
+          );      
+        },            
+      ),                     
+    );                        
+  }                           
+}    
