@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'settingspage.dart';
 import 'task.dart';
 import 'package:flutter/material.dart';
 
@@ -7,10 +8,23 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {  
   const MyApp({super.key});
 
-  ThemeMode _getThemeMode() {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  @override
+  void initState() {
+    super.initState();
+    _themeMode = _calculateAutoThemeMode();
+  }
+
+  ThemeMode _calculateAutoThemeMode() {
     final hour = DateTime.now().hour;
     if (hour >= 6 && hour < 18) {
       return ThemeMode.light;
@@ -35,15 +49,22 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.dark,
         ),
       ),
-      themeMode: _getThemeMode(),
+      themeMode: _themeMode,
       home: const MyHomePage(title: 'Simply Tasks'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({
+    super.key,
+    required this.title,
+    required this.themeMode,
+    required this.onThemeModeChanged,
+  });
   final String title;
+  final ThemeMode themeMode;
+  final Function(ThemeMode) onThemeModeChanged;
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -75,7 +96,7 @@ void initState() {
     setState(() {
       tasks.add(Task(_taskController.text));
       _taskController.clear();
-    });
+    }); 
     _saveTasks();
   }
 
@@ -83,8 +104,16 @@ void initState() {
   Widget build(BuildContext context) {
     return Scaffold(
   appBar: AppBar(
+  shape: const RoundedRectangleBorder(
+    borderRadius: BorderRadius.only(
+      bottomLeft: Radius.circular(20),
+      bottomRight: Radius.circular(20),
+    ),
+  ),
+
+  elevation: 4,
   leadingWidth: 96,
-  backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+  backgroundColor: const Color.fromARGB(255, 240, 235, 235),
   centerTitle: true,
   leading: Row(
     mainAxisSize: MainAxisSize.min,
@@ -133,7 +162,17 @@ void initState() {
   actions: [
     IconButton(
       icon: const Icon(Icons.settings),
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SettingsPage(
+          currentMode: widget.themeMode,
+          onModeChanged: widget.onThemeModeChanged,
+          ),
+        ),  
+       );
+     },
     ),
   ],
 ),
@@ -149,7 +188,9 @@ void initState() {
               });
               _saveTasks();
             },
-            background: Container(
+            background: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+            child: Container(
               color: const Color.fromARGB(255, 196, 82, 74),
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.only(right: 20),
@@ -158,7 +199,9 @@ void initState() {
                 color: Colors.white,
               ),
             ),
+            ),
             child: Card(
+              color: Colors.grey[200],
               margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
