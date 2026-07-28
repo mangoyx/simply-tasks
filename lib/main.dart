@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'settingspage.dart';
 import 'task.dart';
@@ -39,7 +40,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Simply Tasks',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.red,
+          seedColor: Color.fromARGB(255, 222, 202, 173),
           brightness: Brightness.light,
         ),
         appBarTheme: const AppBarTheme(
@@ -122,6 +123,63 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: Center(
+              child: Text(
+                'Simply Tasks',
+                style: TextStyle(            
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+                decoration: TextDecoration.underline,
+                decorationColor: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black
+                ),
+              ),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.code),
+            title: const Text('Github'),
+            onTap: () async {
+              final url = Uri.parse('https://github.com/mangoyx/simply-tasks');
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url);
+              }
+            },
+          ),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('About'),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('About Simply Tasks'),
+                    content: const Text(
+                      'Simply Tasks v1.0.0\nBuilt by mangoyx / MDT\n\nA simple task manager to help you organize your day and build discipline.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Close'),
+                               ),
+                ],
+              ),
+            );
+          },  
+        ),
+          ],
+    ),
+  ),
       appBar: AppBar(
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -135,9 +193,15 @@ class _MyHomePageState extends State<MyHomePage> {
         leading: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            IconButton(
+            Builder(
+            builder: (context) {
+            return IconButton(
               icon: const Icon(Icons.menu),
-              onPressed: () {},
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+              },
             ),
             IconButton(
               icon: const Icon(Icons.add),

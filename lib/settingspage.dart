@@ -16,34 +16,45 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Settings'),
       ),
-      body: Column(
-        children: [
-          ListTile(
-            title: const Text('Light'),
-            leading: Radio<ThemeMode>(
-              value: ThemeMode.light,
-              groupValue: currentMode,
-              onChanged: (value) => onModeChanged(value!),
-            ),
-          ),
-          ListTile(
-            title: const Text('Dark'),
-            leading: Radio<ThemeMode>(
-              value: ThemeMode.dark,
-              groupValue: currentMode,
-              onChanged: (value) => onModeChanged(value!),
-            ),
-          ),
-          ListTile(
-            title: const Text('Auto (6am-6pm)'),
-            leading: Radio<ThemeMode>(
-              value: ThemeMode.system,
-              groupValue: currentMode,
-              onChanged: (value) => onModeChanged(value!),
-            ),
-          ),
-        ],
+     body: Padding(
+  padding: const EdgeInsets.all(16),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        'App Theme',
+        style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
       ),
-    );
+      const SizedBox(height: 8),
+   DropdownMenu<ThemeMode>(
+  initialSelection: currentMode,
+  width: MediaQuery.of(context).size.width - 32,
+  inputDecorationTheme: InputDecorationTheme(
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+  ),
+  menuStyle: MenuStyle(
+    shape: WidgetStateProperty.all(
+      RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+  ),
+  onSelected: (ThemeMode? newMode) {
+    if (newMode != null) {
+      onModeChanged(newMode);
+    }
+  },
+  dropdownMenuEntries: const [
+    DropdownMenuEntry(value: ThemeMode.light, label: 'Light'),
+    DropdownMenuEntry(value: ThemeMode.dark, label: 'Dark'),
+    DropdownMenuEntry(value: ThemeMode.system, label: 'Dynamic'),
+  ],
+),
+    ],              
+  ),                     
+),
+  );
   }
 }
