@@ -1,0 +1,17 @@
+windows/** linguist-vendored
+linux/** linguist-vendored
+macos/** linguist-vendored
+
+android/** linguist-vendored
+ios/** linguist-vendored
+web/** linguist-vendored
+
+CMakeLists.txt linguist-vendored
+**/CMakeLists.txt linguist-vendored
+*.cmake linguist-vendored
+**/g.dart linguist-generated
+**/freezed.dart linguist-generated
+
+ios/Pods/** linguist-vendored
+android/gradle/** linguist-vendored
+.dart_tool/** linguist-vendored
